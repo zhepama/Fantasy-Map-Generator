@@ -1,0 +1,32 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # every 30 minutes
+  workflow_dispatch: # on button click
+ 
+jobs:
+  sync_with_upstream:
+    runs-on: ubuntu-latest
+    name: Sync master with upstream latest
+
+    steps:
+    # Step 1: run a standard checkout action, provided by github
+    - name: Checkout master
+      uses: actions/checkout@v2
+      with:
+        ref: master
+    
+    # Step 2: run this sync action - specify the upstream repo, upstream branch to sync with, and target sync branch
+    - name: Pull upstream changes
+      id: sync
+      uses: aormsby/Fork-Sync-With-Upstream-action@v1
+      with:
+        upstream_repository: Azgaar/Fantasy-Map-Generator
+        upstream_branch: master
+        target_branch: master                       # optional
+        github_token: ${{ secrets.GITHUB_TOKEN }}   # optional, for accessing repos that requir authentication
+        
+    # Step 3: Print a helpful timestamp for your records (optional)
+    - name: Timestamp
+      run: date
